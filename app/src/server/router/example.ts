@@ -22,11 +22,10 @@ export const exampleRouter = createRouter()
   .query("newHost", {
     input: z
       .object({
-        id: z.string().nullish(),
-        address: z.string().nullish(),
-        group: z.string().nullish(),
-      })
-      .nullish(),
+        id: z.string(),
+        address: z.string(),
+        group: z.string(),
+      }),
     async resolve({ ctx, input }) {
       return await ctx.prisma.hosts.create({
         data: {

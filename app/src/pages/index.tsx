@@ -12,9 +12,8 @@ const Home: NextPage = () => {
   }
 
   if (error) {
-    return <div>{JSON.stringify(error)}</div>
+    return <div>Unable To Load, check database is online.</div>
   }
-
 
   return (
     <>
