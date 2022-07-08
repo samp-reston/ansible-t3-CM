@@ -1,7 +1,7 @@
 import { createRouter } from "./context";
 import { z } from "zod";
 
-export const exampleRouter = createRouter()
+export const dbRouter = createRouter()
   .query("hello", {
     input: z
       .object({
@@ -18,22 +18,5 @@ export const exampleRouter = createRouter()
     async resolve({ ctx }) {
       return await ctx.prisma.hosts.findMany();
     },
-  })
-  .query("newHost", {
-    input: z
-      .object({
-        id: z.string(),
-        address: z.string(),
-        group: z.string(),
-      }),
-    async resolve({ ctx, input }) {
-      return await ctx.prisma.hosts.create({
-        data: {
-          id: input?.id,
-          address: input?.address,
-          group: input?.group
-        }
-      })
-    }
   })
   ;

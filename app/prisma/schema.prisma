@@ -61,11 +61,11 @@ model host_variables {
 }
 
 model hosts {
-  id              String           @id @unique(map: "id") @db.VarChar(255)
+  id              String           @id @unique(map: "id") @default(uuid()) @db.VarChar(255)
   address         String           @unique(map: "address") @db.VarChar(255)
-  group           String           @db.VarChar(255)
+  group           String?          @db.VarChar(255)
   last_updated    DateTime         @default(now()) @db.DateTime(0)
-  group_variables group_variables  @relation(fields: [group], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "hosts_ibfk_2")
+  group_variables group_variables? @relation(fields: [group], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "hosts_ibfk_2")
   host_software   host_software    @relation(fields: [id], references: [host_id], onDelete: NoAction, onUpdate: NoAction, map: "hosts_ibfk_1")
   host_variables  host_variables   @relation(fields: [id], references: [host_id], onDelete: NoAction, onUpdate: NoAction, map: "hosts_ibfk_3")
   execution_logs  execution_logs[]
