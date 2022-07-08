@@ -5,6 +5,17 @@ import { trpc } from "../utils/trpc";
 const Home: NextPage = () => {
   const hello = trpc.useQuery(["example.hello", { text: "from tRPC" }]);
 
+  const { data, error, isLoading } = trpc.useQuery(['example.getAll'])
+
+  if (isLoading) {
+    return <p>Loading...</p>
+  }
+
+  if (error) {
+    return <div>{JSON.stringify(error)}</div>
+  }
+
+
   return (
     <>
       <Head>
@@ -13,7 +24,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {hello.data?.greeting}
+      <div>{JSON.stringify(data)}</div>
 
     </>
   );

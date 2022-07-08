@@ -16,6 +16,25 @@ export const exampleRouter = createRouter()
   })
   .query("getAll", {
     async resolve({ ctx }) {
-      return await ctx.prisma.example.findMany();
+      return await ctx.prisma.hosts.findMany();
     },
-  });
+  })
+  .query("newHost", {
+    input: z
+      .object({
+        id: z.string().nullish(),
+        address: z.string().nullish(),
+        group: z.string().nullish(),
+      })
+      .nullish(),
+    async resolve({ ctx, input }) {
+      return await ctx.prisma.hosts.create({
+        data: {
+          id: input?.id,
+          address: input?.address,
+          group: input?.group
+        }
+      })
+    }
+  })
+  ;

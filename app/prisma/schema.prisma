@@ -1,16 +1,74 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = "file:./db.sqlite"
-    // url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
-model Example {
-    id String @id @default(cuid())
+model execution_logs {
+  execution_id Int      @id @unique(map: "execution_id") @default(autoincrement())
+  playbook     String   @db.VarChar(255)
+  status       String   @db.VarChar(4)
+  started      DateTime @db.DateTime(0)
+  ended        DateTime @db.DateTime(0)
+  target_host  String   @db.VarChar(255)
+  hosts        hosts    @relation(fields: [target_host], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "execution_logs_ibfk_1")
+
+  @@index([target_host], map: "target_host")
+}
+
+model group_variables {
+  name                    String  @id @unique(map: "name") @db.VarChar(255)
+  ansible_config          String? @db.VarChar(255)
+  asset_bridge_version    String? @db.VarChar(255)
+  gcp_uploader_version    String? @db.VarChar(255)
+  csslaunch_version       String? @db.VarChar(255)
+  corvus_version          String? @db.VarChar(255)
+  corvus_parallel_version String? @db.VarChar(255)
+  vehicle_spy_version     String? @db.VarChar(255)
+  jlr_sdk_version         String? @db.VarChar(255)
+  hosts                   hosts[]
+}
+
+model host_software {
+  host_id                 String  @id @unique(map: "host_id") @db.VarChar(255)
+  asset_bridge_version    String? @db.VarChar(255)
+  gcp_uploader_version    String? @db.VarChar(255)
+  csslaunch_version       String? @db.VarChar(255)
+  corvus_version          String? @db.VarChar(255)
+  corvus_parallel_version String? @db.VarChar(255)
+  vehicle_spy_version     String? @db.VarChar(255)
+  jlr_sdk_version         String? @db.VarChar(255)
+  hosts                   hosts?
+}
+
+model host_variables {
+  host_id      String  @id @unique(map: "host_id") @db.VarChar(255)
+  rig_name     String? @unique(map: "rig_name") @db.VarChar(255)
+  model_year   Int?
+  model        String? @db.VarChar(255)
+  vin          String? @unique(map: "vin") @db.VarChar(255)
+  intrepid     Int?
+  ni_hostname  String? @db.VarChar(255)
+  rig_type     String? @db.VarChar(255)
+  host_group   String? @db.VarChar(255)
+  test_user    String? @db.VarChar(255)
+  agent        String? @db.VarChar(255)
+  install_user String? @db.VarChar(255)
+  hosts        hosts?
+}
+
+model hosts {
+  id              String           @id @unique(map: "id") @db.VarChar(255)
+  address         String           @unique(map: "address") @db.VarChar(255)
+  group           String           @db.VarChar(255)
+  last_updated    DateTime         @default(now()) @db.DateTime(0)
+  group_variables group_variables  @relation(fields: [group], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "hosts_ibfk_2")
+  host_software   host_software    @relation(fields: [id], references: [host_id], onDelete: NoAction, onUpdate: NoAction, map: "hosts_ibfk_1")
+  host_variables  host_variables   @relation(fields: [id], references: [host_id], onDelete: NoAction, onUpdate: NoAction, map: "hosts_ibfk_3")
+  execution_logs  execution_logs[]
+
+  @@index([group], map: "group")
 }
