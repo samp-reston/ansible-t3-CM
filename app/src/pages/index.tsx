@@ -1,14 +1,27 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useState, FormEvent } from "react";
+import { useForm } from "react-hook-form";
+import { RegisterNewHost } from "../schema/hosts.schema";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   const [hostname, setHostname] = useState('')
   const [rigId, setRigId] = useState('')
+  const { handleSubmit, register } = useForm<RegisterNewHost>()
+
   const { data, error, isLoading } = trpc.useQuery(['db.getAll'])
 
+  const { mutate } = trpc.useMutation(['db.registerNewHost'], {
+    onError: (error) => { },
+    onSuccess: () => {
+      console.log('New host registed successfully.')
+    }
+  })
 
+  const onSubmit = (values: RegisterNewHost) => {
+    mutate(values)
+  }
 
   if (isLoading) {
     return <p>Loading...</p>
@@ -28,15 +41,15 @@ const Home: NextPage = () => {
 
       <div>{data?.length ? JSON.stringify(data) : 'No hosts found.'}</div>
 
-      <form className="flex gap-2 justify-center flex-col w-1/2 m-auto" onSubmit={(e) => console.log(e)}>
+      <form className="flex gap-2 justify-center flex-col w-1/2 m-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex gap-2">
           <label htmlFor="rigId-input">Rig Id:</label>
-          <input className="border-2 border-black rounded px-1" placeholder="VIL_01_RIG" type="text" name="rigId" id="rigId-input" value={rigId} onChange={(e) => setRigId(e.target.value)} />
+          <input className="border-2 border-black rounded px-1" placeholder="VIL_01_RIG" type="text" id="rigId-input" {...register('rigId')} />
         </div>
 
         <div className="flex gap-2">
           <label htmlFor="hostname-input">Hostname:</label>
-          <input className="border-2 border-black rounded px-1 self-end" placeholder="JLR1GBMW1234567" type="text" name="hostname" id="hostname-input" value={hostname} onChange={(e) => setHostname(e.target.value)} />
+          <input className="border-2 border-black rounded px-1 self-end" placeholder="JLR1GBMW1234567" type="text" {...register('hostname')} />
         </div>
 
         <input className="self-end border-2 border-green-600 rounded-full px-2 bg-green-300 hover:cursor-pointer hover:bg-green-400" type="submit" value="Submit" />

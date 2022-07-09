@@ -22,7 +22,7 @@ export const dbRouter = createRouter()
       return await ctx.prisma.hosts.findMany();
     },
   })
-  .mutation("registerHost", {
+  .mutation("registerNewHost", {
     input: registerNewHostSchema,
     async resolve({ ctx, input }) {
       const { rigId, hostname } = input
@@ -41,7 +41,7 @@ export const dbRouter = createRouter()
           if (err.code === 'P2002') {
             throw new trpc.TRPCError({
               code: 'CONFLICT',
-              message: 'Rig Id or Hostname already exists.'
+              message: err.meta?.target === 'hosts_hostname_key' ? 'Hostname already in use.' : 'Rig ID already in use.'
             })
           }
         }
