@@ -6,3 +6,9 @@ export const registerNewHostSchema = z.object({
 })
 
 export type RegisterNewHost = z.TypeOf<typeof registerNewHostSchema>
+
+export const removeHostSchema = z.object({
+  hostname: z.string().min(1)
+})
+
+export type RemoveExistingHost = z.TypeOf<typeof removeHostSchema>

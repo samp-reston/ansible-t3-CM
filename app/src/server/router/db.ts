@@ -1,7 +1,7 @@
 import { createRouter } from "./context";
 import * as trpc from '@trpc/server'
 import { z } from "zod";
-import { registerNewHostSchema } from "../../schema/hosts.schema";
+import { registerNewHostSchema, removeHostSchema } from "../../schema/hosts.schema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 export const dbRouter = createRouter()
@@ -41,6 +41,27 @@ export const dbRouter = createRouter()
       }
     }
   })
+  .mutation("removeHost", {
+    input: removeHostSchema,
+    async resolve({ ctx, input}) {
+      const {hostname} = input
+      try {
+        const removedHost = await ctx.prisma.hosts.delete({
+          where: {
+            hostname: hostname
+          }
+        })
+
+        return removedHost
+      } catch(err) {
+        throw new trpc.TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong.'
+        })
+      }
+    }
+  })
+
   // .mutation("removeHost", {
   //   input: z
   //     .object({

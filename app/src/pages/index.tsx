@@ -10,10 +10,10 @@ const Home: NextPage = () => {
   const [rigId, setRigId] = useState('')
   const { handleSubmit, register } = useForm<RegisterNewHost>()
 
-  const { data, error, isLoading } = trpc.useQuery(['db.getAll'])
+  const { data, error, isLoading, refetch } = trpc.useQuery(['db.getAll'])
 
   const { mutate } = trpc.useMutation(['db.registerNewHost'], {
-    onError: (error) => { },
+    onError: (error) => { console.log(error) },
     onSuccess: () => {
       console.log('New host registed successfully.')
     }
@@ -21,6 +21,7 @@ const Home: NextPage = () => {
 
   const onSubmit = (values: RegisterNewHost) => {
     mutate(values)
+    refetch()
   }
 
   if (isLoading) {
@@ -43,7 +44,7 @@ const Home: NextPage = () => {
 
       <form className="flex gap-2 justify-center flex-col w-1/2 m-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex gap-2">
-          <label htmlFor="rigId-input">Rig Id:</label>
+          <label htmlFor="rigId-input">Rig ID:</label>
           <input className="border-2 border-black rounded px-1" placeholder="VIL_01_RIG" type="text" id="rigId-input" {...register('rigId')} />
         </div>
 
@@ -53,6 +54,9 @@ const Home: NextPage = () => {
         </div>
 
         <input className="self-end border-2 border-green-600 rounded-full px-2 bg-green-300 hover:cursor-pointer hover:bg-green-400" type="submit" value="Submit" />
+
+        // TODO: ADD REMOVE HOST FORM
+
       </form>
     </>
   );
