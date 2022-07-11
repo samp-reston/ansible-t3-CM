@@ -54,6 +54,15 @@ export const dbRouter = createRouter()
 
         return removedHost
       } catch(err) {
+        if(err instanceof PrismaClientKnownRequestError) {
+          if (err.code === 'P2025') {
+            throw new trpc.TRPCError({
+              code: 'NOT_FOUND',
+              message: 'Host does not exist.'
+            })
+          }
+        }
+        console.log(err)
         throw new trpc.TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Something went wrong.'
@@ -61,18 +70,4 @@ export const dbRouter = createRouter()
       }
     }
   })
-
-  // .mutation("removeHost", {
-  //   input: z
-  //     .object({
-  //       rigId: z.string()
-  //     }),
-  //   async resolve({ctx, input}) {
-  //     return await ctx.prisma.hosts.delete({
-  //       where: {
-  //         id: input.rigId
-  //       }
-  //     })
-  //   }
-  // })
   ;
