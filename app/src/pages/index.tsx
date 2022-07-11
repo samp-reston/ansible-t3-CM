@@ -3,9 +3,10 @@ import Head from "next/head";
 import { useForm } from "react-hook-form";
 import { RegisterNewHost, RemoveHost, UpdateHost } from "../schema/hosts.schema";
 import { trpc } from "../utils/trpc";
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
 import { HostVariablesQuery } from "../schema/hostVariables.schema";
 import { useState } from "react";
+import { HostBaseline, HostSoftware } from "@prisma/client";
 
 const Home: NextPage = () => {
   const { handleSubmit: submitNewHost, register: newHostRegister } = useForm<RegisterNewHost>()
@@ -36,6 +37,7 @@ const Home: NextPage = () => {
     }
   })
 
+  //TODO: Remove all related fields when host is removed.
   const onRemoveNewHost = (values: RemoveHost) => {
     removeHost(values)
   }
@@ -45,6 +47,8 @@ const Home: NextPage = () => {
     onSuccess: () => {
       console.log('Host successfully updated.')
       refetchAll()
+      refetchAllHostSoftwares()
+      refetchAllHostBaselines()
     }
   })
 
@@ -62,9 +66,44 @@ const Home: NextPage = () => {
   })
 
   const onQueryHostVariables = () => {
-    console.log(targetHost)
     refetchHostVariables()
   }
+
+  const { data: allHostSoftwares, refetch: refetchAllHostSoftwares } = trpc.useQuery(['db.getAllHostSoftwares'])
+  const { data: allHostBaselines, refetch: refetchAllHostBaselines } = trpc.useQuery(['db.getAllHostBaselines'])
+  const { data: allHosts, refetch: refetchAllHosts } = trpc.useQuery(['db.getAllHosts'])
+
+  // TODO: Use ALLHOSTS to validate and check actual vs baseline rather than current workaround
+
+  const actualSoftwareRows = allHostSoftwares?.map((host) => {
+    const newHost = {
+      rigId: host.rigId,
+      hostname: host.hostname,
+      assetBridge: host.software?.assetBridge,
+      corvus: host.software?.corvus,
+      corvusParallel: host.software?.corvusParallel,
+      cssLaunch: host.software?.cssLaunch,
+      gcpUploader: host.software?.gcpUploader,
+      jlrSDK: host.software?.jlrSDK,
+      vehicleSpy: host.software?.vehicleSpy,
+    }
+    return newHost
+  })
+
+  const baselineSoftwareRows = allHostBaselines?.map((host) => {
+    const newHost = {
+      rigId: host.rigId,
+      hostname: host.hostname,
+      assetBridge: host.baseline?.assetBridge,
+      corvus: host.baseline?.corvus,
+      corvusParallel: host.baseline?.corvusParallel,
+      cssLaunch: host.baseline?.cssLaunch,
+      gcpUploader: host.baseline?.gcpUploader,
+      jlrSDK: host.baseline?.jlrSDK,
+      vehicleSpy: host.baseline?.vehicleSpy,
+    }
+    return newHost
+  })
 
   if (isLoading) {
     return <p>Loading...</p>
@@ -80,6 +119,25 @@ const Home: NextPage = () => {
     { field: 'groupId', headerName: 'Group', flex: 0.5 }
   ]
 
+  const deviationStyling = (params: GridCellParams) => {
+    const { id: rigId, value, field } = params
+    const baselineHost = baselineSoftwareRows?.filter((host) => host.rigId === rigId)[0]
+    if (baselineHost[field] != value) return 'bg-red-300'
+    return ''
+  }
+
+  const deviationColumns: GridColDef[] = [
+    { field: 'rigId', headerName: 'Rig ID', flex: 0.5 },
+    { field: 'hostname', headerName: 'Hostname', flex: 0.5 },
+    { field: 'assetBridge', headerName: 'Asset Bridge', flex: 0.5, cellClassName: deviationStyling },
+    { field: 'gcpUploader', headerName: 'GCP Uploader', flex: 0.5, cellClassName: deviationStyling },
+    { field: 'cssLaunch', headerName: 'CSS Launch', flex: 0.5, cellClassName: deviationStyling },
+    { field: 'corvus', headerName: 'Corvus', flex: 0.5, cellClassName: deviationStyling },
+    { field: 'corvusParallel', headerName: 'Corvus Parallel', flex: 0.5, cellClassName: deviationStyling },
+    { field: 'vehicleSpy', headerName: 'Vehicle Spy 3', flex: 0.5, cellClassName: deviationStyling },
+    { field: 'jlrSDK', headerName: 'JLR SDK', flex: 0.5, cellClassName: deviationStyling }
+  ]
+
   return (
     <>
       <Head>
@@ -93,6 +151,17 @@ const Home: NextPage = () => {
           getRowId={(row) => row.rigId}
           rows={data?.length ? data : []}
           columns={columns}
+          hideFooter
+          autoHeight={true}
+        />
+      </div>
+
+      <h1>Baseline</h1>
+      <div className="flex w-10/12 m-auto">
+        <DataGrid
+          getRowId={(row) => row.rigId}
+          rows={actualSoftwareRows ? actualSoftwareRows : []}
+          columns={deviationColumns}
           hideFooter
           autoHeight={true}
         />

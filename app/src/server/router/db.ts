@@ -10,6 +10,34 @@ export const dbRouter = createRouter()
       return await ctx.prisma.hosts.findMany();
     },
   })
+  .query("getAllHostSoftwares", {
+    async resolve({ ctx }) {
+      return await ctx.prisma.hosts.findMany({
+        include: {
+          software: true,
+        }
+      })
+    }
+  })
+  .query("getAllHostBaselines", {
+    async resolve({ ctx }) {
+      return await ctx.prisma.hosts.findMany({
+        include: {
+          baseline: true,
+        }
+      })
+    }
+  })
+  .query("getAllHosts", {
+    async resolve({ ctx }) {
+      return await ctx.prisma.hosts.findMany({
+        include: {
+          baseline: true,
+          software: true,
+        }
+      })
+    }
+  })
   .query("getHostVariables", {
     input: queryHostVariablesSchema,
     async resolve({ ctx, input }) {
