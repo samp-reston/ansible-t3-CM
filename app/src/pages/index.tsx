@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
-import { Host, hostSchema, RegisterNewHost, RemoveHost, UpdateHost } from "../schema/hosts.schema";
+import { RegisterNewHost, RemoveHost, UpdateHost } from "../schema/hosts.schema";
 import { trpc } from "../utils/trpc";
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { HostVariablesQuery } from "../schema/hostVariables.schema";
 import { useState } from "react";
 
@@ -98,7 +98,7 @@ const Home: NextPage = () => {
         />
       </div>
 
-      {/* <h1>Register New Host</h1>
+      <h1>Register New Host</h1>
       <form className="flex gap-2 justify-center flex-col w-1/2 m-auto" onSubmit={submitNewHost(onRegisterNewHost)}>
 
         <div className="flex gap-2">
@@ -169,7 +169,7 @@ const Home: NextPage = () => {
         </div>
 
         <input className="self-end border-2 border-green-600 rounded-full px-2 bg-green-300 hover:cursor-pointer hover:bg-green-400" type="submit" value="Submit" />
-      </form> */}
+      </form>
     </>
   );
 };
