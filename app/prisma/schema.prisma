@@ -7,10 +7,75 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model hosts {
-  rigId        String   @unique @default(uuid())
-  hostname     String   @unique
+model Hosts {
+  rigId        String          @unique @default(uuid())
+  hostname     String          @id
   groupId      String?
-  created_at   DateTime @default(now())
-  last_updated DateTime @updatedAt
+  created_at   DateTime        @default(now())
+  last_updated DateTime        @updatedAt
+  variables    HostVariables?
+  software     HostSoftware?
+  baseline     HostBaseline?
+  group        GroupBaseline?  @relation(fields: [groupId], references: [groupId])
+  logs         ExecutionLogs[]
+}
+
+model HostVariables {
+  host        Hosts   @relation(fields: [hostId], references: [hostname])
+  hostId      String  @id
+  modelYear   Int?
+  model       String?
+  vin         String? @unique
+  intrepid    Int?    @unique
+  niHostname  String? @unique
+  rigType     String?
+  testUser    String?
+  agent       String?
+  installUser String?
+}
+
+model HostSoftware {
+  host           Hosts   @relation(fields: [hostId], references: [hostname])
+  hostId         String  @id
+  assetBridge    String?
+  gcpUploader    String?
+  cssLaunch      String?
+  corvus         String?
+  corvusParallel String?
+  vehicleSpy     String?
+  jlrSDK         String?
+}
+
+model HostBaseline {
+  host           Hosts   @relation(fields: [hostId], references: [hostname])
+  hostId         String  @id
+  assetBridge    String?
+  gcpUploader    String?
+  cssLaunch      String?
+  corvus         String?
+  corvusParallel String?
+  vehicleSpy     String?
+  jlrSDK         String?
+}
+
+model GroupBaseline {
+  hosts          Hosts[]
+  groupId        String  @id
+  assetBridge    String?
+  gcpUploader    String?
+  cssLaunch      String?
+  corvus         String?
+  corvusParallel String?
+  vehicleSpy     String?
+  jlrSDK         String?
+}
+
+model ExecutionLogs {
+  executionID String   @id @default(uuid())
+  playbook    String
+  status      String
+  started     DateTime
+  ended       DateTime
+  hostId      String
+  targetHost  Hosts    @relation(fields: [hostId], references: [hostname])
 }

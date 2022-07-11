@@ -1,14 +1,35 @@
 import { createRouter } from "./context";
 import * as trpc from '@trpc/server'
-import { z } from "zod";
-import { registerNewHostSchema, removeHostSchema } from "../../schema/hosts.schema";
+import { registerNewHostSchema, removeHostSchema, updateHostSchema } from "../../schema/hosts.schema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { queryHostVariablesSchema } from "../../schema/hostVariables.schema";
 
 export const dbRouter = createRouter()
   .query("getAll", {
     async resolve({ ctx }) {
       return await ctx.prisma.hosts.findMany();
     },
+  })
+  .query("getHostVariables", {
+    input: queryHostVariablesSchema,
+    async resolve({ ctx, input }) {
+      const { hostname } = input
+
+      try {
+        const hostVariables = await ctx.prisma.hostVariables.findUnique({
+          where: {
+            hostId: hostname
+          }
+        })
+        return hostVariables
+      } catch(err) {
+        console.log(err)
+        throw new trpc.TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong.'
+        })
+      }
+    }
   })
   .mutation("registerNewHost", {
     input: registerNewHostSchema,
@@ -54,6 +75,7 @@ export const dbRouter = createRouter()
 
         return removedHost
       } catch(err) {
+        console.log(err)
         if(err instanceof PrismaClientKnownRequestError) {
           if (err.code === 'P2025') {
             throw new trpc.TRPCError({
@@ -62,6 +84,29 @@ export const dbRouter = createRouter()
             })
           }
         }
+        throw new trpc.TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong.'
+        })
+      }
+    }
+  })
+  .mutation("updateHost", {
+    input: updateHostSchema,
+    async resolve({ ctx, input}) {
+      const { hostname, rigId } = input
+      try {
+        const updateHost = await ctx.prisma.hosts.update({
+          where: {
+            hostname: hostname
+          },
+          data: {
+            rigId: rigId
+          }
+        })
+
+        return updateHost
+      } catch(err) {
         console.log(err)
         throw new trpc.TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

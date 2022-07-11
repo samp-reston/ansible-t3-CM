@@ -22,3 +22,10 @@ export const removeHostSchema = z.object({
 })
 
 export type RemoveHost = z.TypeOf<typeof removeHostSchema>
+
+export const updateHostSchema = z.object({
+  hostname: z.string().min(1),
+  rigId: z.string().min(1)
+})
+
+export type UpdateHost = z.TypeOf<typeof updateHostSchema>
