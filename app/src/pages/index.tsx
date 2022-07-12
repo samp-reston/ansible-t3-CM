@@ -122,7 +122,8 @@ const Home: NextPage = () => {
   const deviationStyling = (params: GridCellParams) => {
     const { id: rigId, value, field } = params
     const baselineHost = baselineSoftwareRows?.filter((host) => host.rigId === rigId)[0]
-    if (baselineHost[field] != value) return 'bg-red-300'
+    if (!baselineHost?.hasOwnProperty(field)) return ''
+    if (baselineHost[field as keyof typeof baselineHost] != value) return 'bg-red-300'
     return ''
   }
 
@@ -138,6 +139,15 @@ const Home: NextPage = () => {
     { field: 'jlrSDK', headerName: 'JLR SDK', flex: 0.5, cellClassName: deviationStyling }
   ]
 
+  const supportedModelYears = () => {
+    const currentYear = new Date().getFullYear()
+    const supportedYears: number[] = []
+    for (let i = -5; i < 6; i++) {
+      supportedYears.push(currentYear + i)
+    }
+    return supportedYears
+  }
+
   return (
     <>
       <Head>
@@ -146,6 +156,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <h1>All Hosts</h1>
       <div className="flex w-10/12 m-auto">
         <DataGrid
           getRowId={(row) => row.rigId}
@@ -156,7 +167,7 @@ const Home: NextPage = () => {
         />
       </div>
 
-      <h1>Baseline</h1>
+      <h1>Host Softwares</h1>
       <div className="flex w-10/12 m-auto">
         <DataGrid
           getRowId={(row) => row.rigId}
@@ -168,16 +179,64 @@ const Home: NextPage = () => {
       </div>
 
       <h1>Register New Host</h1>
-      <form className="flex gap-2 justify-center flex-col w-1/2 m-auto" onSubmit={submitNewHost(onRegisterNewHost)}>
+      <form className="flex gap-2 justify-center flex-row w-1/2 m-auto" onSubmit={submitNewHost(onRegisterNewHost)}>
+        <div className="flex flex-col gap-2 border-black border-2 p-2">
+          <h2>Host Classification</h2>
+          <div className="flex gap-2">
+            <label htmlFor="rigId-input">Rig ID:</label>
+            <input required className="border-2 border-black rounded px-1" placeholder="VIL_01_RIG" type="text" id="rigId-input" {...newHostRegister('rigId')} />
+          </div>
 
-        <div className="flex gap-2">
-          <label htmlFor="rigId-input">Rig ID:</label>
-          <input className="border-2 border-black rounded px-1" placeholder="VIL_01_RIG" type="text" id="rigId-input" {...newHostRegister('rigId')} />
+          <div className="flex gap-2">
+            <label htmlFor="hostname-input">Hostname:</label>
+            <input required className="border-2 border-black rounded px-1 self-end" id="hostname-input" placeholder="JLR1GBMW1234567" type="text" {...newHostRegister('hostname')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="group-input">Group:</label>
+            <input className="border-2 border-black rounded px-1 self-end" id="group-input" placeholder="VITAL_DSPACE" type="text" {...newHostRegister('group')} />
+          </div>
         </div>
 
-        <div className="flex gap-2">
-          <label htmlFor="hostname-input">Hostname:</label>
-          <input className="border-2 border-black rounded px-1 self-end" placeholder="JLR1GBMW1234567" type="text" {...newHostRegister('hostname')} />
+        <div className="flex flex-col gap-2 border-black border-2 p-2">
+          <h2>Host Variables</h2>
+          <div className="flex gap-2">
+            <label htmlFor="modelYear">Model Year:</label>
+            <select className="border-2 border-black rounded px-1 self-end" id="modelYear" {...newHostRegister('modelYear')}>
+              {supportedModelYears().map((year) => {
+                return (
+                  <option value={year}>{year}</option>
+                )
+              })}
+            </select>
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="model-input">Model:</label>
+            <input className="border-2 border-black rounded px-1 self-end" maxLength={4} id="model-input" placeholder="L123" type="text" {...newHostRegister('model')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="vin-input">VIN:</label>
+            <input className="border-2 border-black rounded px-1 self-end" maxLength={17} id="vin-input" placeholder="XXXXXXXXXXXXXXXXX" type="text" {...newHostRegister('vin')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="intrepid-input">Intrepid:</label>
+            <input className="border-2 border-black rounded px-1 self-end" id="intrepid-input" placeholder="Intrepid Hardware ID" type="number" step={1} {...newHostRegister('intrepid')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="niHostname-input">NI Vision Hostname:</label>
+            <input className="border-2 border-black rounded px-1 self-end" id="niHostname-input" placeholder="NI Vision Hostname" type="text" {...newHostRegister('niHostname')} />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 border-black border-2 p-2">
+          <h2>Host Baseline</h2>
+          <div className="flex gap-2">
+
+          </div>
         </div>
 
         <input className="self-end border-2 border-green-600 rounded-full px-2 bg-green-300 hover:cursor-pointer hover:bg-green-400" type="submit" value="Submit" />
