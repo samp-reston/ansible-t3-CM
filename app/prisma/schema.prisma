@@ -23,6 +23,7 @@ model Hosts {
 model HostVariables {
   host        Hosts   @relation(fields: [hostId], references: [hostname])
   hostId      String  @id
+  rigName     String  @unique
   modelYear   Int?
   model       String?
   vin         String? @unique

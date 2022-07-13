@@ -17,6 +17,8 @@ const Home: NextPage = () => {
 
   const { data, error, isLoading, refetch: refetchAll } = trpc.useQuery(['db.getAll'])
 
+  const { data: groupData, refetch: refetchGroups } = trpc.useQuery(['db.getGroups'])
+
   const { mutate: registerNewHost } = trpc.useMutation(['db.registerNewHost'], {
     onError: (error) => { console.log(error) },
     onSuccess: () => {
@@ -59,9 +61,6 @@ const Home: NextPage = () => {
   const { data: hostVariableData, refetch: refetchHostVariables } = trpc.useQuery(['db.getHostVariables', {
     hostname: targetHost
   }], {
-    onSuccess(data) {
-      console.log(data);
-    },
     enabled: false
   })
 
@@ -148,6 +147,12 @@ const Home: NextPage = () => {
     return supportedYears
   }
 
+  const supportedRigTypes: string[] = [
+    "DSPACE",
+    "NI",
+    "VECT"
+  ]
+
   return (
     <>
       <Head>
@@ -179,8 +184,8 @@ const Home: NextPage = () => {
       </div>
 
       <h1>Register New Host</h1>
-      <form className="flex gap-2 justify-center flex-row w-1/2 m-auto" onSubmit={submitNewHost(onRegisterNewHost)}>
-        <div className="flex flex-col gap-2 border-black border-2 p-2">
+      <form className="flex gap-2 justify-center flex-row w-auto m-auto" onSubmit={submitNewHost(onRegisterNewHost)}>
+        <div id="hostClassification" className="flex flex-col gap-2 border-black border-2 p-2">
           <h2>Host Classification</h2>
           <div className="flex gap-2">
             <label htmlFor="rigId-input">Rig ID:</label>
@@ -193,19 +198,34 @@ const Home: NextPage = () => {
           </div>
 
           <div className="flex gap-2">
-            <label htmlFor="group-input">Group:</label>
-            <input className="border-2 border-black rounded px-1 self-end" id="group-input" placeholder="VITAL_DSPACE" type="text" {...newHostRegister('group')} />
+            <label htmlFor="groupId">Group:</label>
+            <select className="border-2 border-black rounded px-1 self-end" id="groupId" {...newHostRegister('groupId')}>
+              <option value={undefined}></option>
+              {groupData?.map((group) => {
+                const { groupId } = group
+                return (
+                  <option key={groupId} value={groupId}>{groupId}</option>
+                )
+              })}
+            </select>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-black border-2 p-2">
+        <div id="hostVariables" className="flex flex-col gap-2 border-black border-2 p-2">
           <h2>Host Variables</h2>
+
+          <div className="flex gap-2">
+            <label htmlFor="rigName-input">CSS Launch Rig Name:</label>
+            <input className="border-2 border-black rounded px-1 self-end" id="rigName-input" placeholder="VIL01" type="text" {...newHostRegister('rigName')} />
+          </div>
+
           <div className="flex gap-2">
             <label htmlFor="modelYear">Model Year:</label>
             <select className="border-2 border-black rounded px-1 self-end" id="modelYear" {...newHostRegister('modelYear')}>
+              <option value={undefined}></option>
               {supportedModelYears().map((year) => {
                 return (
-                  <option value={year}>{year}</option>
+                  <option key={year} value={year}>{year}</option>
                 )
               })}
             </select>
@@ -228,14 +248,63 @@ const Home: NextPage = () => {
 
           <div className="flex gap-2">
             <label htmlFor="niHostname-input">NI Vision Hostname:</label>
-            <input className="border-2 border-black rounded px-1 self-end" id="niHostname-input" placeholder="NI Vision Hostname" type="text" {...newHostRegister('niHostname')} />
+            <input className="border-2 border-black rounded px-1 self-end" id="niHostname-input" placeholder="gal1exukvil3" type="text" {...newHostRegister('niHostname')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="rigType">Rig Type:</label>
+            <select className="border-2 border-black rounded px-1 self-end" id="rigType" {...newHostRegister('rigType')}>
+              <option value={undefined}></option>
+              {supportedRigTypes.map((rigType) => {
+                return (
+                  <option key={rigType} value={rigType}>{rigType}</option>
+                )
+              })}
+            </select>
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="testUser-input">CSS Launch User:</label>
+            <input className="border-2 border-black rounded px-1 self-end" id="testUser-input" placeholder="VIL01AUT" type="text" {...newHostRegister('testUser')} />
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-black border-2 p-2">
-          <h2>Host Baseline</h2>
-          <div className="flex gap-2">
+        <div id="hostBaseline" className="flex flex-col gap-2 border-black border-2 p-2">
+          <h2>Host Software Version Baseline</h2>
 
+          <div className="flex gap-2">
+            <label htmlFor="assetBridge-input">Asset Bridge:</label>
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="assetBridge-input" {...newHostRegister('assetBridge')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="gcpUploader-input">GCP Uploader:</label>
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="gcpUploader-input" {...newHostRegister('gcpUploader')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="cssLaunch-input">CSS Launch:</label>
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="cssLaunch-input" {...newHostRegister('cssLaunch')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="jlrSDK-input">JLR SDK:</label>
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="jlrSDK-input" {...newHostRegister('jlrSDK')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="corvus-input">Corvus:</label>
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="corvus-input" {...newHostRegister('corvus')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="corvusParallel-input">Corvus Parallel:</label>
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="corvusParallel-input" {...newHostRegister('corvusParallel')} />
+          </div>
+
+          <div className="flex gap-2">
+            <label htmlFor="vehicleSpy-input">Vehicle Spy:</label>
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="vehicleSpy-input" {...newHostRegister('vehicleSpy')} />
           </div>
         </div>
 

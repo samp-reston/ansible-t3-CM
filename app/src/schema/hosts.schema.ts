@@ -12,7 +12,19 @@ export type Host = z.TypeOf<typeof hostSchema>
 
 export const registerNewHostSchema = z.object({
   rigId: z.string().min(1),
-  hostname: z.string().min(1)
+  hostname: z.string().min(1),
+  groupId: z.string().optional(),
+
+  rigName: z.string().optional(),
+  modelYear: z.number().optional(),
+  model: z.string().optional(),
+  vin: z.string().optional(),
+  intrepid: z.number().optional(),
+  niHostname: z.string().optional(),
+  rigType: z.string().optional(),
+  testUser: z.string().optional(),
+
+  
 })
 
 export type RegisterNewHost = z.TypeOf<typeof registerNewHostSchema>

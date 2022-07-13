@@ -10,6 +10,15 @@ export const dbRouter = createRouter()
       return await ctx.prisma.hosts.findMany();
     },
   })
+  .query("getGroups", {
+    async resolve({ ctx }) {
+      return await ctx.prisma.groupBaseline.findMany({
+        select: {
+          groupId: true
+        }
+      });
+    },
+  })
   .query("getAllHostSoftwares", {
     async resolve({ ctx }) {
       return await ctx.prisma.hosts.findMany({
@@ -62,13 +71,14 @@ export const dbRouter = createRouter()
   .mutation("registerNewHost", {
     input: registerNewHostSchema,
     async resolve({ ctx, input }) {
-      const { rigId, hostname } = input
+      const { rigId, hostname, groupId } = input
 
       try {
         const host = await ctx.prisma.hosts.create({
           data: {
             rigId,
-            hostname
+            hostname,
+            groupId
           }
         })
 
