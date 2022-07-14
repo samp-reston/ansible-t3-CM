@@ -24,7 +24,13 @@ export const registerNewHostSchema = z.object({
   rigType: z.string().optional(),
   testUser: z.string().optional(),
 
-  
+  assetBridge: z.string().optional(),
+  gcpUploader: z.string().optional(),
+  cssLaunch: z.string().optional(),
+  corvus: z.string().optional(),
+  corvusParallel: z.string().optional(),
+  vehicleSpy: z.string().optional(),
+  jlrSDK: z.string().optional(),
 })
 
 export type RegisterNewHost = z.TypeOf<typeof registerNewHostSchema>
