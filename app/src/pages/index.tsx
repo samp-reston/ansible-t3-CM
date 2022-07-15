@@ -158,7 +158,7 @@ const Home: NextPage = () => {
   const formSetNumber = (v: string | undefined) => {
     return v ? parseInt(v) : null
   }
-  
+
   const setNullIfEmpty = (v: string | undefined) => {
     return v ? v : null
   }
@@ -209,7 +209,7 @@ const Home: NextPage = () => {
 
           <div className="flex gap-2">
             <label htmlFor="groupId">Group:</label>
-            <select className="border-2 border-black rounded px-1 self-end" id="groupId" {...newHostRegister('groupId', {setValueAs: v => setNullIfEmpty(v)})}>
+            <select className="border-2 border-black rounded px-1 self-end" id="groupId" {...newHostRegister('groupId', { setValueAs: v => setNullIfEmpty(v) })}>
               <option value={undefined}></option>
               {groupData?.map((group) => {
                 const { groupId } = group
@@ -226,37 +226,37 @@ const Home: NextPage = () => {
 
           <div className="flex gap-2">
             <label htmlFor="rigName-input">CSS Launch Rig Name:</label>
-            <input className="border-2 border-black rounded px-1 self-end" id="rigName-input" placeholder="VIL01" type="text" {...newHostRegister('rigName', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1 self-end" id="rigName-input" placeholder="VIL01" type="text" {...newHostRegister('rigName', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="modelYear">Model Year:</label>
-            <input className="border-2 border-black rounded px-1 self-end" id="intrepid-input" placeholder="2022" type="text" {...newHostRegister('modelYear', {setValueAs: v => formSetNumber(v)})} />
+            <input className="border-2 border-black rounded px-1 self-end" id="intrepid-input" placeholder="2022" type="text" {...newHostRegister('modelYear', { setValueAs: v => formSetNumber(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="model-input">Model:</label>
-            <input className="border-2 border-black rounded px-1 self-end" maxLength={4} id="model-input" placeholder="L123" type="text" {...newHostRegister('model', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1 self-end" maxLength={4} id="model-input" placeholder="L123" type="text" {...newHostRegister('model', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="vin-input">VIN:</label>
-            <input className="border-2 border-black rounded px-1 self-end" maxLength={17} id="vin-input" placeholder="XXXXXXXXXXXXXXXXX" type="text" {...newHostRegister('vin', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1 self-end" maxLength={17} id="vin-input" placeholder="XXXXXXXXXXXXXXXXX" type="text" {...newHostRegister('vin', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="intrepid-input">Intrepid:</label>
-            <input className="border-2 border-black rounded px-1 self-end" id="intrepid-input" placeholder="Intrepid Hardware ID" type="text" {...newHostRegister('intrepid', {setValueAs: v => formSetNumber(v)})} />
+            <input className="border-2 border-black rounded px-1 self-end" id="intrepid-input" placeholder="Intrepid Hardware ID" type="text" {...newHostRegister('intrepid', { setValueAs: v => formSetNumber(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="niHostname-input">NI Vision Hostname:</label>
-            <input className="border-2 border-black rounded px-1 self-end" id="niHostname-input" placeholder="gal1exukvil3" type="text" {...newHostRegister('niHostname', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1 self-end" id="niHostname-input" placeholder="gal1exukvil3" type="text" {...newHostRegister('niHostname', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="rigType">Rig Type:</label>
-            <select className="border-2 border-black rounded px-1 self-end" id="rigType" {...newHostRegister('rigType', {setValueAs: v => setNullIfEmpty(v)})}>
+            <select className="border-2 border-black rounded px-1 self-end" id="rigType" {...newHostRegister('rigType', { setValueAs: v => setNullIfEmpty(v) })}>
               <option value={undefined}></option>
               {supportedRigTypes.map((rigType) => {
                 return (
@@ -268,7 +268,7 @@ const Home: NextPage = () => {
 
           <div className="flex gap-2">
             <label htmlFor="testUser-input">CSS Launch User:</label>
-            <input className="border-2 border-black rounded px-1 self-end" id="testUser-input" placeholder="VIL01AUT" type="text" {...newHostRegister('testUser', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1 self-end" id="testUser-input" placeholder="VIL01AUT" type="text" {...newHostRegister('testUser', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
         </div>
 
@@ -277,37 +277,37 @@ const Home: NextPage = () => {
 
           <div className="flex gap-2">
             <label htmlFor="assetBridge-input">Asset Bridge:</label>
-            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="assetBridge-input" {...newHostRegister('assetBridge', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="assetBridge-input" {...newHostRegister('assetBridge', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="gcpUploader-input">GCP Uploader:</label>
-            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="gcpUploader-input" {...newHostRegister('gcpUploader', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="gcpUploader-input" {...newHostRegister('gcpUploader', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="cssLaunch-input">CSS Launch:</label>
-            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="cssLaunch-input" {...newHostRegister('cssLaunch', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="cssLaunch-input" {...newHostRegister('cssLaunch', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="jlrSDK-input">JLR SDK:</label>
-            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="jlrSDK-input" {...newHostRegister('jlrSDK', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="jlrSDK-input" {...newHostRegister('jlrSDK', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="corvus-input">Corvus:</label>
-            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="corvus-input" {...newHostRegister('corvus', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="corvus-input" {...newHostRegister('corvus', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="corvusParallel-input">Corvus Parallel:</label>
-            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="corvusParallel-input" {...newHostRegister('corvusParallel', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="corvusParallel-input" {...newHostRegister('corvusParallel', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
 
           <div className="flex gap-2">
             <label htmlFor="vehicleSpy-input">Vehicle Spy:</label>
-            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="vehicleSpy-input" {...newHostRegister('vehicleSpy', {setValueAs: v => setNullIfEmpty(v)})} />
+            <input className="border-2 border-black rounded px-1" placeholder="1.0.0" type="text" id="vehicleSpy-input" {...newHostRegister('vehicleSpy', { setValueAs: v => setNullIfEmpty(v) })} />
           </div>
         </div>
 

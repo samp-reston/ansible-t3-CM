@@ -72,15 +72,15 @@ export const dbRouter = createRouter()
     input: registerNewHostSchema,
     async resolve({ ctx, input }) {
       const {
-        rigId, 
-        hostname, 
+        rigId,
+        hostname,
         groupId,
-        assetBridge, 
+        assetBridge,
         gcpUploader,
         cssLaunch,
-        corvus, 
-        corvusParallel, 
-        vehicleSpy, 
+        corvus,
+        corvusParallel,
+        vehicleSpy,
         jlrSDK,
         modelYear,
         model,
@@ -91,8 +91,6 @@ export const dbRouter = createRouter()
         testUser,
       } = input
 
-      console.log(input)
-      
       try {
         const host = await ctx.prisma.hosts.create({
           data: {
@@ -168,13 +166,31 @@ export const dbRouter = createRouter()
     async resolve({ ctx, input}) {
       const {hostname} = input
       try {
-        const removedHost = await ctx.prisma.hosts.delete({
+        const removeHostFromHosts = await ctx.prisma.hosts.deleteMany({
           where: {
             hostname: hostname
           }
         })
 
-        return removedHost
+        const removeHostFromHostSoftware = await ctx.prisma.hostBaseline.deleteMany({
+          where: {
+            hostId: hostname
+          }
+        }).catch()
+
+        const removeHostFromHostBaseline = await ctx.prisma.hostBaseline.deleteMany({
+          where: {
+            hostId: hostname
+          }
+        }).catch()
+
+        const removeHostFromHostVariables = await ctx.prisma.hostVariables.deleteMany({
+          where: {
+            hostId: hostname
+          }
+        }).catch()
+
+        return [removeHostFromHosts, removeHostFromHostSoftware, removeHostFromHostBaseline, removeHostFromHostVariables]
       } catch(err) {
         console.log(err)
         if(err instanceof PrismaClientKnownRequestError) {
