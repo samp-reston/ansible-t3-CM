@@ -71,8 +71,28 @@ export const dbRouter = createRouter()
   .mutation("registerNewHost", {
     input: registerNewHostSchema,
     async resolve({ ctx, input }) {
-      const { rigId, hostname, groupId } = input
+      const {
+        rigId, 
+        hostname, 
+        groupId,
+        assetBridge, 
+        gcpUploader,
+        cssLaunch,
+        corvus, 
+        corvusParallel, 
+        vehicleSpy, 
+        jlrSDK,
+        modelYear,
+        model,
+        vin,
+        intrepid,
+        niHostname,
+        rigType,
+        testUser,
+      } = input
 
+      console.log(input)
+      
       try {
         const host = await ctx.prisma.hosts.create({
           data: {
@@ -82,8 +102,51 @@ export const dbRouter = createRouter()
           }
         })
 
-        return host
+        const hostVariables = await ctx.prisma.hostVariables.create({
+          data: {
+            hostId: hostname,
+            rigName: rigId,
+            modelYear,
+            model,
+            vin,
+            intrepid,
+            niHostname,
+            rigType,
+            testUser,
+            agent: rigId,
+            installUser: testUser,
+          }
+        })
+
+        const hostBaseline = await ctx.prisma.hostBaseline.create({
+          data: {
+            hostId: hostname,
+            assetBridge,
+            gcpUploader,
+            cssLaunch,
+            corvus,
+            corvusParallel,
+            vehicleSpy,
+            jlrSDK
+          }
+        })
+
+        const hostSoftware = await ctx.prisma.hostSoftware.create({
+          data: {
+            hostId: hostname,
+            assetBridge: null,
+            gcpUploader: null,
+            cssLaunch: null,
+            corvus: null,
+            corvusParallel: null,
+            vehicleSpy: null,
+            jlrSDK: null
+          }
+        })
+
+        return [host, hostBaseline, hostVariables, hostSoftware]
       } catch(err) {
+        console.log(err)
         if(err instanceof PrismaClientKnownRequestError) {
           if (err.code === 'P2002') {
             throw new trpc.TRPCError({
@@ -92,7 +155,7 @@ export const dbRouter = createRouter()
             })
           }
         }
-
+        console.log(err)
         throw new trpc.TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Something went wrong.'
