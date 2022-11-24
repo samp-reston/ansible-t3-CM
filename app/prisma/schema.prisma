@@ -78,17 +78,19 @@ model ExecutionLogs {
   started            DateTime
   ended              DateTime
   hostId             String
+  software           String
+  task               String
   targetHost         Hosts                @relation(fields: [hostId], references: [hostname])
-  SoftwareExecutions SoftwareExecutions[]
+  // SoftwareExecutions SoftwareExecutions[]
 }
 
-model SoftwareExecutions {
-  taskID      String        @id @default(uuid())
-  task        String
-  status      String
-  started     DateTime
-  ended       DateTime
-  software    String
-  executionID String
-  execution   ExecutionLogs @relation(fields: [executionID], references: [executionID])
-}
+// model SoftwareExecutions {
+//   taskID      String        @id @default(uuid())
+//   task        String
+//   status      String
+//   started     DateTime
+//   ended       DateTime
+//   software    String
+//   executionID String
+//   execution   ExecutionLogs @relation(fields: [executionID], references: [executionID])
+// }
