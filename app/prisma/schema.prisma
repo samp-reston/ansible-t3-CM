@@ -72,11 +72,23 @@ model GroupBaseline {
 }
 
 model ExecutionLogs {
-  executionID String   @id @default(uuid())
-  playbook    String
+  executionID        String               @id @default(uuid())
+  playbook           String
+  status             String
+  started            DateTime
+  ended              DateTime
+  hostId             String
+  targetHost         Hosts                @relation(fields: [hostId], references: [hostname])
+  SoftwareExecutions SoftwareExecutions[]
+}
+
+model SoftwareExecutions {
+  taskID      String        @id @default(uuid())
+  task        String
   status      String
   started     DateTime
   ended       DateTime
-  hostId      String
-  targetHost  Hosts    @relation(fields: [hostId], references: [hostname])
+  software    String
+  executionID String
+  execution   ExecutionLogs @relation(fields: [executionID], references: [executionID])
 }
